@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/ssmodish/passportPresentation#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "passport": "^0.4.1",
+    "passport-google-oauth20": "^2.0.0"
   }
 }
