@@ -50,6 +50,8 @@ const PORT = process.env.PORT || 5000
 app.listen(PORT)
 ```
 
+---
+
 ## Step 3
 
 Go to console.developers.google.com
@@ -79,3 +81,43 @@ module.exports = {
 ```
 
 - - ADD keys.js to .gitignore
+
+---
+
+## Step 4
+
+Add arguments to strategy
+
+1st is object with ID, secret, and callback URL
+
+2nd is function (for now show accessToken)
+
+index.js should now look like this:
+
+```
+// index.js
+const express = require('express')
+const passport = require('passport')
+const GoogleStrategy = require('passport-google-oauth20')
+const keys = require('./config/keys')
+
+const app = express()
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: keys.googleClientID,
+      clientSecret: keys.googleClientSecret,
+      callbackURL: '/auth/google/callback',
+    },
+    (accessToken) => {
+      console.log(accessToken)
+    }
+  )
+)
+
+const PORT = process.env.PORT || 5000
+app.listen(PORT)
+```
+
+---
