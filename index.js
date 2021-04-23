@@ -4,8 +4,11 @@ const passport = require('passport')
 const GoogleStrategy = require('passport-google-oauth20')
 const mongoose = require('mongoose')
 const keys = require('./config/keys')
+require('./models/User')
 
 mongoose.connect(keys.mongoURI)
+
+const User = mongoose.model('users')
 
 const app = express()
 
@@ -17,12 +20,12 @@ passport.use(
       callbackURL: '/auth/google/callback',
     },
     (accessToken, refreshToken, profile, done) => {
-      console.log('Access token: ' + accessToken)
-      console.log('Refresh token: ' + refreshToken)
-      console.log('Profile: ')
-      for (const [key, value] of Object.entries(profile)) {
-        console.log(`${key}: ${value}`)
-      }
+      User.findOne({ googleID: profile.id }).then((existingUser) => {
+        if (existingUser) {
+        } else {
+          new User({ googleID: profile.id }).save()
+        }
+      })
     }
   )
 )

@@ -215,5 +215,100 @@ const PORT = process.env.PORT || 5000
 app.listen(PORT)
 ```
 
-This prints the data we should send/compare to our database to. So go ahead and hook that up!
- 
+This prints the data we should send/compare to our database to. So lets go ahead and hook that up!
+
+---
+
+## Step 7
+
+Docker installed?
+
+```docker pull mongo```
+
+```docker run -d --name mongo-on-docker -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=<username> -e MONGO_INITDB_ROOT_PASSWORD=<password> mongo```
+
+Your connection string will be: ```mongodb://<username>:<password>@<host>:<port>/?authSource=admin```
+
+Stop server, run ```npm i mongoose```
+
+Create models/User.js
+
+```
+// User.js
+const mongoose = require('mongoose')
+const { Schema } = mongoose
+
+const userSchema = new Schema({
+  googleID: String,
+})
+
+mongoose.model('users', userSchema)
+```
+
+```
+// index.js
+const express = require('express')
+const passport = require('passport')
+const GoogleStrategy = require('passport-google-oauth20')
+const mongoose = require('mongoose')
+const keys = require('./config/keys')
+require('./models/User')
+
+mongoose.connect(keys.mongoURI)
+
+const User = mongoose.model('users')
+
+const app = express()
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: keys.googleClientID,
+      clientSecret: keys.googleClientSecret,
+      callbackURL: '/auth/google/callback',
+    },
+    (accessToken, refreshToken, profile, done) => {
+      new User({ googleID: profile.id }).save()
+    }
+  )
+)
+
+app.get(
+  '/auth/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+  })
+)
+
+app.get('/auth/google/callback', passport.authenticate('google'))
+
+const PORT = process.env.PORT || 5000
+app.listen(PORT)
+```
+
+This will ALWAYS add the users googleID to the database even if they are already there so we change to
+
+```
+// index.js
+...
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: keys.googleClientID,
+      clientSecret: keys.googleClientSecret,
+      callbackURL: '/auth/google/callback',
+    },
+    (accessToken, refreshToken, profile, done) => {
+      User.findOne({ googleID: profile.id }).then((existingUser) => {
+        if (existingUser) {
+        } else {
+          new User({ googleID: profile.id }).save()
+        }
+      })
+    }
+  )
+)
+...
+```
+
+Now we have hooked up mongoose and are only adding each user to the database once
