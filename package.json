@@ -4,7 +4,8 @@
   "description": "This will explain the steps necessary for using passport.js for OAuth",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -18,6 +19,8 @@
   "homepage": "https://github.com/ssmodish/passportPresentation#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "mongoose": "^5.12.5",
+    "nodemon": "^2.0.7",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0"
   }

@@ -88,9 +88,9 @@ module.exports = {
 
 Add arguments to strategy
 
-1st is object with ID, secret, and callback URL
+1st argument is an object with ID, secret, and callback URL
 
-2nd is function (for now show accessToken)
+2nd argument is a function (for now show accessToken)
 
 index.js should now look like this:
 
@@ -121,3 +121,99 @@ app.listen(PORT)
 ```
 
 ---
+
+## Step 5
+
+Add passport to a route
+
+```
+// index.js
+const express = require('express')
+const passport = require('passport')
+const GoogleStrategy = require('passport-google-oauth20')
+const keys = require('./config/keys')
+
+const app = express()
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: keys.googleClientID,
+      clientSecret: keys.googleClientSecret,
+      callbackURL: '/auth/google/callback',
+    },
+    (accessToken) => {
+      console.log(accessToken)
+    }
+  )
+)
+
+app.get(
+  '/auth/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+  })
+)
+
+const PORT = process.env.PORT || 5000
+app.listen(PORT)
+```
+
+Should fail but at callback route
+
+This has completed the OAuth steps:
+
+- Client requests access from Authorization Server
+- Authorization Server requests permission from Resource Owner (by sending the "choose account" splash)
+- Resource Owner approves request from Authorization Server
+- Authorization Server sends Client an auth token
+
+---
+
+## Step 6
+
+Add nodemon and scripts into package.json (should do this at the start)
+
+Index.js now looks like this:
+```
+// index.js
+const express = require('express')
+const passport = require('passport')
+const GoogleStrategy = require('passport-google-oauth20')
+const keys = require('./config/keys')
+
+const app = express()
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: keys.googleClientID,
+      clientSecret: keys.googleClientSecret,
+      callbackURL: '/auth/google/callback',
+    },
+    (accessToken, refreshToken, profile, done) => {
+      console.log('Access token: ' + accessToken)
+      console.log('Refresh token: ' + refreshToken)
+      console.log('Profile: ')
+      for (const [key, value] of Object.entries(profile)) {
+        console.log(`${key}: ${value}`)
+      }
+    }
+  )
+)
+
+app.get(
+  '/auth/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+  })
+)
+
+app.get('/auth/google/callback', passport.authenticate('google'))
+
+const PORT = process.env.PORT || 5000
+app.listen(PORT)
+```
+
+This prints the data we should send/compare to our database to. So go ahead and hook that up!
+ 
