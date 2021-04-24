@@ -413,3 +413,32 @@ app.get('/api/current_user', (req, res) => {
 const PORT = process.env.PORT || 5000
 app.listen(PORT)
 ```
+
+---
+
+## Step 9
+
+Make it work!
+
+First thing is to redirect the callback by adding ```(req, res) => {res.redirect('/api/current_user')}``` as the third argument.
+Now when we login we get our user info back
+
+Next add a logout endpoint:
+```
+app.get('/api/logout', (req, res) => {
+  req.logout()
+})
+```
+
+For our purposes I'll add a redirect back to the current_user endpoint - ```res.redirect('/api/current_user')```
+
+and then fill out the current user with a little conditional html:
+```
+if (req.user) {
+    res.send(`<h1>Welcome ${req.user.id}</h1><a href='/api/logout'><button>Logout</button></a>`)
+  } else {
+    res.send(`<a href='/auth/google'><button>Login</button></a>`)
+  }
+```
+
+Now we have an app!

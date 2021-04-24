@@ -58,14 +58,21 @@ app.get(
   })
 )
 
-app.get('/auth/google/callback', passport.authenticate('google'))
+app.get('/auth/google/callback', passport.authenticate('google'), (req, res) => {
+  res.redirect('/api/current_user')
+})
 
 app.get('/api/logout', (req, res) => {
   req.logout()
+  res.redirect('/api/current_user')
 })
 
 app.get('/api/current_user', (req, res) => {
-  res.send(req.user)
+  if (req.user) {
+    res.send(`<h1>Welcome ${req.user.id}</h1><a href='/api/logout'><button>Logout</button></a>`)
+  } else {
+    res.send(`<a href='/auth/google'><button>Login</button></a>`)
+  }
 })
 
 const PORT = process.env.PORT || 5000
