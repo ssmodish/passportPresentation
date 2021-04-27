@@ -1,0 +1,19 @@
+{
+  "name": "passportpresentation",
+  "version": "1.0.0",
+  "description": "You will need a Mongo DB connection to follow along.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ssmodish/passportPresentation.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ssmodish/passportPresentation/issues"
+  },
+  "homepage": "https://github.com/ssmodish/passportPresentation#readme"
+}
