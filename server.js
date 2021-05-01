@@ -26,6 +26,8 @@ server.get(
   })
 )
 
+server.get('/auth/google/callback', passport.authenticate('google'))
+
 server.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/views/index.html'))
 })

@@ -152,6 +152,8 @@ app.get(
   })
 )
 
+server.get('/auth/google/callback', passport.authenticate('google'))
+
 server.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/views/index.html'))
 })
@@ -160,4 +162,4 @@ const PORT = process.env.port || 8000
 server.listen(PORT, console.log(`Server is listening on port ${PORT}`))
 ```
 
-If we try our app now we get the Google login screen but an error after that...
+If we try our app now we hang on the Google login screen but our auth token prints out at the server.
