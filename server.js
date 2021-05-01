@@ -13,8 +13,13 @@ passport.use(
       clientSecret: keys.googleClientSecret,
       callbackURL: '/auth/google/callback',
     },
-    (accessToken) => {
-      console.log(accessToken)
+    (accessToken, refreshToken, profile, done) => {
+      console.log('Access token: ' + accessToken + '\n')
+      console.log('Refresh token: ' + refreshToken + '\n')
+      console.log('Profile: ')
+      for (const [key, value] of Object.entries(profile._json)) {
+        console.log(`${key}: ${value}`)
+      }
     }
   )
 )
@@ -25,6 +30,8 @@ server.get(
     scope: ['profile', 'email'],
   })
 )
+
+server.get('/auth/google/callback', passport.authenticate('google'))
 
 server.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/views/index.html'))
