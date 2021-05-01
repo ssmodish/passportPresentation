@@ -4,12 +4,12 @@ Run `npm init -y` and then `npm i express`
 
 Then:
 
-```
+```javascript
 // server.js
 const server = require('express')()
 
 server.get('/', (req, res) => {
-	res.send('Hello Florida JS!')
+  res.send('Hello Florida JS!')
 })
 
 const PORT = process.env.port || 8000
