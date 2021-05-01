@@ -78,3 +78,43 @@ server.get('/', (req, res) => {
 const PORT = process.env.port || 8000
 server.listen(PORT, console.log(`Server is listening on port ${PORT}`))
 ```
+
+---
+
+## Step 4
+
+Register app with Google Cloud Platform
+
+- Go to https://console.cloud.google.com
+- Create a new project
+- Enable Google+ API
+- Generate Credentials
+- Configure the Consent Screen
+
+  - Choose External
+  - Enter App name and Support Email
+  - At the bottom, add Developer Contact info.
+
+- Credentials
+
+  - Choose **OAuth Client ID**
+  - Then choose **Web Application**
+  - Add:
+
+    - Authorized JS Origins:
+
+      `http://localhost:8000`
+
+    - Authorized redirect URIs
+
+      `http://localhost:8000/auth/google/callback`
+
+Copy the credentials that popup to `/config/keys.js` and add that file to your `.gitignore`
+
+```javascript
+// /config/keys.js
+module.exports = {
+  googleClientID: 'YOUR_CLIENT_ID',
+  googleClientSecret: 'YOUR_SECRET_ID',
+}
+```
