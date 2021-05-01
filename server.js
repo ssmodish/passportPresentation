@@ -6,6 +6,8 @@ const path = require('path')
 const keys = require('./config/keys')
 require('./models/User')
 
+mongoose.connect(keys.mongoUri)
+
 const User = mongoose.model('users')
 
 const server = require('express')()
@@ -18,7 +20,16 @@ passport.use(
       callbackURL: '/auth/google/callback',
     },
     (accessToken, refreshToken, profile, done) => {
-      new User({ googleID: profile.id }).save()
+      try {
+        User.findOne({ googleID: profile.id }).then((existingUser) => {
+          if (existingUser) {
+          } else {
+            new User({ googleID: profile.id }).save()
+          }
+        })
+      } catch (error) {
+        console.log(error)
+      }
     }
   )
 )
