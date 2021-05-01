@@ -118,3 +118,46 @@ module.exports = {
   googleClientSecret: 'YOUR_SECRET_ID',
 }
 ```
+
+---
+
+## Step 5
+
+Now we need to update our strategy to use the keys we just got.
+
+```javascript
+// server.js
+const passport = require('passport')
+const GoogleStrategy = require('passport-google-oauth20')
+
+const server = require('express')()
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: keys.googleClientID,
+      clientSecret: keys.googleClientSecret,
+      callbackURL: '/auth/google/callback',
+    },
+    (accessToken) => {
+      console.log(accessToken)
+    }
+  )
+)
+
+app.get(
+  '/auth/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+  })
+)
+
+server.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '/views/index.html'))
+})
+
+const PORT = process.env.port || 8000
+server.listen(PORT, console.log(`Server is listening on port ${PORT}`))
+```
+
+If we try our app now we get the Google login screen but an error after that...
